@@ -1,0 +1,19 @@
+# @package _global_
+
+defaults:
+  - override /model_args: gemma2_9b
+
+data_args:
+  train_data_name_or_path: "zichao22/self-instruct"
+
+model_args:
+  lora_r: 128
+  lora_alpha: 128
+
+training_args:
+  output_dir: models/gemma2_9b_si_exp_lr3e-5_peft_constant_r128_a128
+  run_name: gemma2_9b_si_exp_lr3e-5_peft_constant_r128_a128
+  learning_rate: 3.0e-5
+  lr_scheduler_type: constant_with_warmup
+
+  

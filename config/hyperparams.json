@@ -1,0 +1,114 @@
+{
+  "ppo": {
+    "ScriptArguments": {
+      "dataset_name": "zichao22/robo-instruct",
+      "dataset_config": null,
+      "dataset_train_split": "train",
+      "dataset_test_split": "test",
+      "gradient_checkpointing_use_reentrant": false,
+      "ignore_bias_buffers": false
+    },
+    "PPOConfig": {
+      "num_ppo_epochs": 4,
+      "kl_estimator": "k3",
+      "kl_coef": 0.9,
+      "cliprange": 0.2,
+      "gradient_accumulation_steps": 1,
+      "learning_rate": 1e-6,
+      "vf_coef": 1.0,
+      "cliprange_value": 0.3,
+      "local_rollout_forward_batch_size": 4,
+      "missing_eos_penalty": 1,
+      "per_device_train_batch_size": 4,
+      "per_device_eval_batch_size": 8,
+      "response_length": 256,
+      "local_mini_batch_size": 4,
+      "ds3_gather_for_generation": false,
+      "auto_find_batch_size": false,
+      "num_total_batches": null,
+      "world_size": 1,
+      "report_to": "wandb",
+      "num_sample_generations": 30,
+      "save_steps": 300,
+      "whiten_rewards": false,
+      "stop_token": null,
+      "save_only_model": true
+    },
+    "ModelConfig": {
+      "model_name_or_path": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+      "trust_remote_code": true,
+      "use_peft": true,
+      "lora_r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "lora_target_modules":  ["q_proj", "v_proj", "k_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+    }
+  },
+  "ppo_code_gen": {
+    "ScriptArguments": {
+      "dataset_name": "nvidia/OpenCodeInstruct",
+      "dataset_config": null,
+      "dataset_train_split": "train",
+      "dataset_test_split": "test",
+      "gradient_checkpointing_use_reentrant": false,
+      "ignore_bias_buffers": false
+    },
+    "PPOConfig": {
+      "num_ppo_epochs": 4,
+      "kl_estimator": "k3",
+      "kl_coef": 0.1,
+      "cliprange": 0.2,
+      "gradient_accumulation_steps": 1,
+      "learning_rate": 3e-6,
+      "vf_coef": 1.0,
+      "cliprange_value": 0.3,
+      "local_rollout_forward_batch_size": 8,
+      "missing_eos_penalty": 1,
+      "per_device_train_batch_size": 8,
+      "per_device_eval_batch_size": 8,
+      "response_length": 256,
+      "local_mini_batch_size": 8,
+      "ds3_gather_for_generation": true,
+      "auto_find_batch_size": false,
+      "num_total_batches": null,
+      "world_size": 2,
+      "report_to": "wandb",
+      "num_sample_generations": 30,
+      "save_steps": 300,
+      "whiten_rewards": false,
+      "stop_token": null,
+      "save_only_model": true
+    },
+    "ModelConfig": {
+      "model_name_or_path": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
+      "trust_remote_code": true,
+      "use_peft": true,
+      "lora_r": 16,
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "lora_target_modules":  ["q_proj", "v_proj", "k_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+    }
+  },
+  "framework": {
+    "robo": {
+      "use_extra_rewards": true,
+      "reward_functions": [
+        "robo_instruct_sim_reward"
+      ],
+      "syncode_coef": 0.1,
+      "linter_coef": 0.1,
+      "rewards_coef": [0.8]
+    },
+    "code_gen": {
+      "use_extra_rewards": true,
+      "reward_functions": [
+        "calculate_dfg_match",
+        "calculate_pass_at_k"
+      ],
+      "syncode_coef": 0.1,
+      "linter_coef": 0.1,
+      "rewards_coef": [0.1, 0.7]
+    }
+  }
+
+}

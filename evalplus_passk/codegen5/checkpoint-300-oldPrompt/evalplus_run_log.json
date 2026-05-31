@@ -1,0 +1,3 @@
+"Computing expected output...\nExpected outputs computed in 45.69s\nReading samples...\nmbpp (base tests)\npass@1:\t0.683\nmbpp+ (base + extra tests)\n
+
+pass@1:\t0.577\n"

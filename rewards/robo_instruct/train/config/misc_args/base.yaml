@@ -1,0 +1,5 @@
+seq_length: 2048
+packing: false
+verbose: false
+wandb_project_name: robo-instruct
+use_flash_attention: true

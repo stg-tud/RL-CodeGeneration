@@ -1,0 +1,4 @@
+model_name_or_path: unsloth/gemma-2-9b
+tokenizer_name_or_path: unsloth/gemma-2-9b
+lora_r: 16
+lora_alpha: 16

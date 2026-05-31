@@ -1,0 +1,9 @@
+completion_mode: false
+text_column: text
+load_from_disk: false
+prompt_column: prefix
+intro_template: ""
+output_column: solution
+response_template: "# Instruction: "
+
+train_data_name_or_path: ???

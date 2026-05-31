@@ -1,0 +1,21 @@
+# starcoder optim config: https://arxiv.org/pdf/2305.06161.pdf
+optim: adamw_torch
+adam_beta1: 0.9
+adam_beta2: 0.95
+adam_epsilon: 1.0e-8
+
+do_train: true
+bf16: true
+logging_steps: 5
+report_to : wandb
+save_only_model: true
+learning_rate: 3.0e-05
+lr_scheduler_type: constant_with_warmup
+num_train_epochs: 5
+output_dir: checkpoints
+run_name: gpt4-si
+gradient_accumulation_steps: 4
+per_device_train_batch_size: 2
+warmup_ratio: 0.03
+save_strategy: steps
+save_steps: 100

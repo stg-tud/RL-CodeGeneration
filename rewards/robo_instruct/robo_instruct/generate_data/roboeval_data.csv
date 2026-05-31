@@ -1,0 +1,1233 @@
+taskname,prompt_program
+StaplerDelivery_0,"Check every printer room for a stapler, and deliver a stapler from the supply room to every printer room without a stapler.
+def task_program():
+    list_of_rooms = get_all_rooms()
+    for room in list_of_rooms:
+        if ""printer room"" not in room:
+            continue
+        go_to(room)
+        if not is_in_room(""stapler""):
+            go_to(""supply room"")
+            pick(""stapler"")
+            go_to(room)
+            place(""stapler"")
+"
+StaplerDelivery_1,"Go to every printer room and check if there is a stapler. For each visited room that does not have a stapler, deliver a stapler from the supply room to that room.
+def task_program():
+    list_of_rooms = get_all_rooms()
+    for room in list_of_rooms:
+        if ""printer room"" not in room:
+            continue
+        go_to(room)
+        if not is_in_room(""stapler""):
+            go_to(""supply room"")
+            pick(""stapler"")
+            go_to(room)
+            place(""stapler"")
+"
+StaplerDelivery_2,"Check if there is a stapler in every printer room. For each visited room without a stapler, deliver a stapler from the supply room to that room.
+def task_program():
+    list_of_rooms = get_all_rooms()
+    for room in list_of_rooms:
+        if ""printer room"" not in room:
+            continue
+        go_to(room)
+        if not is_in_room(""stapler""):
+            go_to(""supply room"")
+            pick(""stapler"")
+            go_to(room)
+            place(""stapler"")
+"
+StaplerDelivery_3,"Make sure there is a stapler in each printer room. Otherwise, bring a stapler from the supply room to each printer room that currently lacks one.
+def task_program():
+    list_of_rooms = get_all_rooms()
+    for room in list_of_rooms:
+        if ""printer room"" not in room:
+            continue
+        go_to(room)
+        if not is_in_room(""stapler""):
+            go_to(""supply room"")
+            pick(""stapler"")
+            go_to(room)
+            place(""stapler"")
+"
+StaplerDelivery_4,"Check if every printer room has a stapler. If not, put a stapler from the supply room to every printer room without a stapler.
+def task_program():
+    list_of_rooms = get_all_rooms()
+    for room in list_of_rooms:
+        if ""printer room"" not in room:
+            continue
+        go_to(room)
+        if not is_in_room(""stapler""):
+            go_to(""supply room"")
+            pick(""stapler"")
+            go_to(room)
+            place(""stapler"")
+"
+GrilledCheese_0,"Compile a list of ingredients for grilled cheese. Go to Zarko's office, and ask him which of them he has. Come back and tell me what he does not have.
+def task_program():
+    start_loc = get_current_location()
+    ingredients = [""bread"", ""cheese"", ""butter""]
+    missing_ingredients = []
+    go_to(""Zarko's office"")
+    for ingredient in ingredients:
+        response = ask(""Zarko"", ""Do you have "" + ingredient + ""?"", [""Yes"", ""No""])
+        if response == ""No"":
+            missing_ingredients.append(ingredient)
+    go_to(start_loc)
+    if len(missing_ingredients) > 0:
+        message = ""Zarko does not have: ""
+        for ingredient in missing_ingredients:
+            message += ingredient + "", ""
+        message = message[:-2]
+    else:
+        message = ""Zarko has all the ingredients for grilled cheese""
+    say(message)
+"
+GrilledCheese_2,"Put together a compilation of grilled cheese ingredients. Head to Zarko's office, inquire about his available ingredients, and then update me on what he does not have.
+def task_program():
+    start_loc = get_current_location()
+    ingredients = [""bread"", ""cheese"", ""butter""]
+    missing_ingredients = []
+    go_to(""Zarko's office"")
+    for ingredient in ingredients:
+        response = ask(""Zarko"", ""Do you have "" + ingredient + ""?"", [""Yes"", ""No""])
+        if response == ""No"":
+            missing_ingredients.append(ingredient)
+    go_to(start_loc)
+    if len(missing_ingredients) > 0:
+        message = ""Zarko is missing: ""
+        for ingredient in missing_ingredients:
+            message += ingredient + "", ""
+        message = message[:-2]
+    else:
+        message = ""Zarko has all the ingredients for grilled cheese""
+    say(message)
+"
+GrilledCheese_3,"Compile the necessary ingredients for grilled cheese. Go to Zarko's office, ask him about his available items, and then report back to me which items he does not have.
+def task_program():
+    start_loc = get_current_location()
+    ingredients = [""bread"", ""cheese"", ""butter""]
+    missing_ingredients = []
+    go_to(""Zarko's office"")
+    for ingredient in ingredients:
+        response = ask(""Zarko"", ""Do you have "" + ingredient + ""?"", [""Yes"", ""No""])
+        if response == ""No"":
+            missing_ingredients.append(ingredient)
+    go_to(start_loc)
+    if len(missing_ingredients) > 0:
+        message = ""Zarko is missing: ""
+        for ingredient in missing_ingredients:
+            message += ingredient + "", ""
+        message = message[:-2]
+    else:
+        message = ""Zarko has all the ingredients for grilled cheese""
+    say(message)
+"
+GrilledCheese_4,"Put together a list of grilled cheese ingredients. Head to Zarko's office and inquire about his available ingredients. Return and inform me of what he is missing.
+def task_program():
+    start_loc = get_current_location()
+    ingredients = [""bread"", ""cheese"", ""butter""]
+    missing_ingredients = []
+    go_to(""Zarko's office"")
+    for ingredient in ingredients:
+        response = ask(""Zarko"", ""Do you have "" + ingredient + ""?"", [""Yes"", ""No""])
+        if response == ""No"":
+            missing_ingredients.append(ingredient)
+    go_to(start_loc)
+    if len(missing_ingredients) > 0:
+        message = ""Zarko is missing: ""
+        for ingredient in missing_ingredients:
+            message += ingredient + "", ""
+        message = message[:-2]
+    else:
+        message = ""Zarko has all the ingredients for a grilled cheese""
+    say(message)
+"
+HalloweenList_0,"Go to every office, and if there is anyone there, ask if they'd like a chocolate, caramel, or gummy. Come back and tell me how many of each we need to buy.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    chocolate_count = 0
+    caramel_count = 0
+    gummy_count = 0
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            response = ask("""", ""Would you like a chocolate, caramel, or gummy?"", [""chocolate"", ""caramel"", ""gummy""])
+            if response == ""chocolate"":
+                chocolate_count += 1
+            elif response == ""caramel"":
+                caramel_count += 1
+            elif response == ""gummy"":
+                gummy_count += 1
+    go_to(start_loc)
+    say(""We need to buy "" + str(chocolate_count) + "" chocolates, "" + str(caramel_count) + "" caramels, and "" + str(gummy_count) + "" gummies."")
+"
+HalloweenList_1,"Go to every office, and if there is a person there, ask them if they'd like a chocolate, caramel, or gummy. Come back and tell me how many of each we need to buy.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    chocolate_count = 0
+    caramel_count = 0
+    gummy_count = 0
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            response = ask("""", ""Would you like a chocolate, caramel, or gummy?"", [""chocolate"", ""caramel"", ""gummy""])
+            if response == ""chocolate"":
+                chocolate_count += 1
+            elif response == ""caramel"":
+                caramel_count += 1
+            elif response == ""gummy"":
+                gummy_count += 1
+    go_to(start_loc)
+    say(""We need to buy "" + str(chocolate_count) + "" chocolates, "" + str(caramel_count) + "" caramels, and "" + str(gummy_count) + "" gummies"")
+"
+HalloweenList_2,"Check with every occupied office to see if the occupant would like a chocolate, caramel, or gummy. Let me know how many of each we need to buy.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    chocolate_count = 0
+    caramel_count = 0
+    gummy_count = 0
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            response = ask("""", ""Would you like a chocolate, caramel, or gummy?"", [""chocolate"", ""caramel"", ""gummy""])
+            if response == ""chocolate"":
+                chocolate_count += 1
+            elif response == ""caramel"":
+                caramel_count += 1
+            elif response == ""gummy"":
+                gummy_count += 1
+    go_to(start_loc)
+    say(""We need to buy "" + str(chocolate_count) + "" chocolates, "" + str(caramel_count) + "" caramels, and "" + str(gummy_count) + "" gummies."")
+"
+HalloweenList_3,"Find every occupied office and ask their occupants whether they would like a chocolate, caramel, or gummy. Let me know how many of each we need to buy.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    chocolate_count = 0
+    caramel_count = 0
+    gummy_count = 0
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            response = ask("""", ""Would you like a chocolate, caramel, or gummy?"", [""chocolate"", ""caramel"", ""gummy""])
+            if response == ""chocolate"":
+                chocolate_count += 1
+            elif response == ""caramel"":
+                caramel_count += 1
+            elif response == ""gummy"":
+                gummy_count += 1
+    go_to(start_loc)
+    say(""We need to buy "" + str(chocolate_count) + "" chocolates, "" + str(caramel_count) + "" caramels, and "" + str(gummy_count) + "" gummies."")
+"
+HalloweenList_4,"Go to every office with a person, and ask them if they would like a chocolate, caramel, or gummy, then come back and tell me how many of each people asked for.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    chocolate_count = 0
+    caramel_count = 0
+    gummy_count = 0
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            response = ask("""", ""Would you like a chocolate, caramel, or gummy?"", [""chocolate"", ""caramel"", ""gummy""])
+            if response == ""chocolate"":
+                chocolate_count += 1
+            elif response == ""caramel"":
+                caramel_count += 1
+            elif response == ""gummy"":
+                gummy_count += 1
+    go_to(start_loc)
+    say(""People asked for "" + str(chocolate_count) + "" chocolates, "" + str(caramel_count) + "" caramels, and "" + str(gummy_count) + "" gummies"")
+"
+MovieMessenger_0,"Ask Sally in her office if she wants to go to the cinema with Mark. Go to Mark's office and tell him Sally's answer. If Sally says yes, ask Mark whether he wants to leave at 4PM, 5PM, or 6PM - then go tell Sally what time Mark is leaving.
+def task_program():
+    go_to(""Sally's office"")
+    response_sally = ask(""Sally"", ""Do you want to go to the cinema with Mark?"", [""Yes"", ""No""])
+    go_to(""Mark's office"")
+    say(""Sally said: "" + response_sally)
+    if response_sally == ""Yes"":
+        response_mark = ask(""Mark"", ""What time do you want to leave? 4PM, 5PM, or 6PM?"", [""4PM"", ""5PM"", ""6PM""])
+        go_to(""Sally's office"")
+        say(""Mark is leaving at "" + response_mark)
+"
+MovieMessenger_1,"Ask Sally if she wants to go to the cinema with Mark. Tell Mark what Sally said, and if Sally said yes, ask Mark whether he wants to leave at 4PM, 5PM, or 6PM, and then go tell Sally what time Mark is leaving.
+def task_program():
+    go_to(""Sally's office"")
+    response_sally = ask(""Sally"", ""Do you want to go to the cinema with Mark?"", [""Yes"", ""No""])
+    go_to(""Mark's office"")
+    say(""Sally said: "" + response_sally)
+    if response_sally == ""Yes"":
+        response_mark = ask(""Mark"", ""What time do you want to leave?"", [""4PM"", ""5PM"", ""6PM""])
+        go_to(""Sally's office"")
+        say(""Mark is leaving at "" + response_mark)
+"
+MovieMessenger_2,"Ask Sally if she wants to go to the cinema with Mark. Tell Mark what Sally said, and if yes, ask Mark whether he wants to leave at 4PM, 5PM, or 6PM. If Sally said yes, go tell Sally what time Mark is leaving.
+def task_program():
+    go_to(""Sally's office"")
+    response_sally = ask(""Sally"", ""Do you want to go to the cinema with Mark?"", [""Yes"", ""No""])
+    go_to(""Mark's office"")
+    say(""Sally said: "" + response_sally)
+    if response_sally == ""Yes"":
+        response_mark = ask(""Mark"", ""What time do you want to leave?"", [""4PM"", ""5PM"", ""6PM""])
+        go_to(""Sally's office"")
+        say(""Mark is leaving at "" + response_mark)
+"
+MovieMessenger_3,"Go to Sally's office and ask her if she wants to go to the cinema with Mark. Tell Mark what Sally said, and if yes, ask Mark whether he wants to leave at 4PM, 5PM, or 6PM, and then go back to Sally's office and tell her what Mark said.
+def task_program():
+    go_to(""Sally's office"")
+    response_sally = ask(""Sally"", ""Do you want to go to the cinema with Mark?"", [""Yes"", ""No""])
+    go_to(""Mark's office"")
+    say(""Sally said: "" + response_sally)
+    if response_sally == ""Yes"":
+        response_mark = ask(""Mark"", ""Do you want to leave at 4PM, 5PM, or 6PM?"", [""4PM"", ""5PM"", ""6PM""])
+        go_to(""Sally's office"")
+        say(""Mark wants to leave at "" + response_mark)
+"
+MovieMessenger_4,"Ask Sally if she wants to go to the cinema with Mark. Tell Mark what Sally said, and if yes, ask Mark whether he wants to leave at 4PM, 5PM, or 6PM. Then then go tell Sally what Mark said.
+def task_program():
+    go_to(""Sally's office"")
+    response_sally = ask(""Sally"", ""Do you want to go to the cinema with Mark?"", [""Yes"", ""No""])
+    go_to(""Mark's office"")
+    say(""Sally said: "" + response_sally)
+    if response_sally == ""Yes"":
+        response_mark = ask(""Mark"", ""Do you want to leave at 4PM, 5PM, or 6PM?"", [""4PM"", ""5PM"", ""6PM""])
+        go_to(""Sally's office"")
+        say(""Mark wants to leave at "" + response_mark)
+"
+SayGoodDay_0,"Go to every lab and if there is a person there, say Good Day!
+def task_program():
+    list_of_rooms = get_all_rooms()
+    for room in list_of_rooms:
+        if ""lab"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            say(""Good Day!"")
+"
+SayGoodDay_1,"Visit each lab and if someone is present, greet them with a pleasant Good Day!
+def task_program():
+    list_of_rooms = get_all_rooms()
+    for room in list_of_rooms:
+        if ""lab"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            say(""Good Day!"")
+"
+SayGoodDay_2,"Go through all the labs, and if there's a person inside, say 'Good Day!' to them.
+def task_program():
+    list_of_rooms = get_all_rooms()
+    for room in list_of_rooms:
+        if ""lab"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            say(""Good Day!"")
+"
+SayGoodDay_3,"Head to each lab and in case there's a person present, bid them a Good Day!
+def task_program():
+    list_of_rooms = get_all_rooms()
+    for room in list_of_rooms:
+        if ""lab"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            say(""Good Day!"")
+"
+SayGoodDay_4,"Visit every lab space and when encountering an individual, tell them a Good Day!
+def task_program():
+    list_of_rooms = get_all_rooms()
+    for room in list_of_rooms:
+        if ""lab"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            say(""Good Day!"")
+"
+LunchBreak_0,"Ask if Alice and Bob in their offices are up for lunch. If yes, tell them that we'll meet in the lobby in 5 minutes. Come back and tell me who all are joining for lunch.
+def task_program():
+    start_loc = get_current_location()
+    lunch_participants = []
+    for person in [""Alice"", ""Bob""]:
+        go_to(person + ""'s office"")
+        response = ask(person, ""Are you up for lunch?"", [""Yes"", ""No""])
+        if response == ""Yes"":
+            lunch_participants.append(person)
+            say(""We'll meet in the lobby in 5 minutes"")
+    go_to(start_loc)
+    if len(lunch_participants) > 0:
+        message = "", "".join(lunch_participants) + "" are joining for lunch""
+    else:
+        message = ""No one is joining for lunch""
+    say(message)
+"
+LunchBreak_1,"Ask Alice in her office if she is up for lunch, and if yes, tell her that we will meet in the lobby in 5 minutes. Do the same for Bob. Come back and tell me who all are joining for lunch.
+def task_program():
+    start_loc = get_current_location()
+    lunch_participants = []
+    for person in [""Alice"", ""Bob""]:
+        go_to(person + ""'s office"")
+        response = ask(person, ""Are you up for lunch?"", [""Yes"", ""No""])
+        if response == ""Yes"":
+            lunch_participants.append(person)
+            say(""We will meet in the lobby in 5 minutes"")
+    go_to(start_loc)
+    if len(lunch_participants) > 0:
+        message = "", "".join(lunch_participants) + "" are joining for lunch""
+    else:
+        message = ""No one is joining for lunch""
+    say(message)
+"
+LunchBreak_2,"Go to Alice's and Bob's offices and ask each of them if they are up for lunch. If they say yes, tell them that we will meet in the lobby in 5 minutes. Come back and tell me who all are joining for lunch.
+def task_program():
+    start_loc = get_current_location()
+    lunch_participants = []
+    for person in [""Alice"", ""Bob""]:
+        go_to(person + ""'s office"")
+        response = ask(person, ""Are you up for lunch?"", [""Yes"", ""No""])
+        if response == ""Yes"":
+            lunch_participants.append(person)
+            say(""We will meet in the lobby in 5 minutes"")
+    go_to(start_loc)
+    if len(lunch_participants) > 0:
+        message = "", "".join(lunch_participants) + "" are joining for lunch""
+    else:
+        message = ""No one is joining for lunch""
+    say(message)
+"
+LunchBreak_3,"Ask Alice and Bob if they are up for lunch. If they say yes, tell them that we will meet in the lobby in five minutes. Come back and tell me who all are joining for lunch.
+def task_program():
+    start_loc = get_current_location()
+    lunch_participants = []
+    for person in [""Alice"", ""Bob""]:
+        go_to(person + ""'s office"")
+        response = ask(person, ""Are you up for lunch?"", [""Yes"", ""No""])
+        if response == ""Yes"":
+            lunch_participants.append(person)
+            say(""We will meet in the lobby in five minutes"")
+    go_to(start_loc)
+    if len(lunch_participants) > 0:
+        message = """"
+        for person in lunch_participants:
+            message += person + "", ""
+        message += ""are joining for lunch""
+    else:
+        message = ""No one is joining for lunch""
+    say(message)
+"
+LunchBreak_4,"Go to Alice's office and ask her if she is free for lunch. If she says yes, tell her that we will meet in the lobby in five minutes. Do the same for Bob. Come back and tell me who will join for lunch.
+def task_program():
+    start_loc = get_current_location()
+    lunch_participants = []
+    for person in [""Alice"", ""Bob""]:
+        go_to(person + ""'s office"")
+        response = ask(person, ""Are you free for lunch?"", [""Yes"", ""No""])
+        if response == ""Yes"":
+            say(""We will meet in the lobby in five minutes"")
+            lunch_participants.append(person)
+    go_to(start_loc)
+    if len(lunch_participants) > 0:
+        message = """"
+        for person in lunch_participants:
+            message += person + "", ""
+        message += ""will join for lunch""
+    else:
+        message = ""No one will join for lunch""
+    say(message)
+"
+StaplerSupply_0,"Check every printer room for a stapler, and come back and tell me which ones do not have a stapler.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    room_without_stapler = []
+    for room in list_of_rooms:
+        if ""printer room"" not in room:
+            continue
+        go_to(room)
+        if not is_in_room(""stapler""):
+            room_without_stapler.append(room)
+    go_to(start_loc)
+    if len(room_without_stapler) > 0:
+        message = """"
+        for room in room_without_stapler:
+            message += room + "", ""
+        message += ""do not have a stapler""
+    else:
+        message = ""all printer rooms have a stapler""
+    say(message)
+"
+StaplerSupply_1,"Go to every printer room and check to see if there is a stapler. Come back and tell me which printer rooms do not have a stapler.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    rooms_without_stapler = []
+    for room in list_of_rooms:
+        if ""printer room"" not in room:
+            continue
+        go_to(room)
+        if not is_in_room(""stapler""):
+            rooms_without_stapler.append(room)
+    go_to(start_loc)
+    if len(rooms_without_stapler) > 0:
+        message = """"
+        for room in rooms_without_stapler:
+            message += room + "", ""
+        message += ""do not have a stapler""
+    else:
+        message = ""all printer rooms have a stapler""
+    say(message)
+"
+StaplerSupply_2,"Go find all printer rooms that do not have a stapler. Come back and tell me.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    rooms_without_stapler = []
+    for room in list_of_rooms:
+        if ""printer room"" not in room:
+            continue
+        go_to(room)
+        if not is_in_room(""stapler""):
+            rooms_without_stapler.append(room)
+    go_to(start_loc)
+    if len(rooms_without_stapler) > 0:
+        message = ""The following printer rooms do not have a stapler: ""
+        for room in rooms_without_stapler:
+            message += room + "", ""
+        say(message)
+    else:
+        say(""All printer rooms have a stapler"")
+"
+StaplerSupply_3,"Check all printer rooms for staplers, and come back and tell me which ones do not have any staplers.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    room_without_stapler = []
+    for room in list_of_rooms:
+        if ""printer room"" not in room:
+            continue
+        go_to(room)
+        if not is_in_room(""stapler""):
+            room_without_stapler.append(room)
+    go_to(start_loc)
+    if len(room_without_stapler) > 0:
+        message = """"
+        for room in room_without_stapler:
+            message += room + "", ""
+        message += ""do not have a stapler""
+    else:
+        message = ""all printer rooms have a stapler""
+    say(message)
+"
+StaplerSupply_4,"Tell me the name of every printer room that does not have a stapler.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    printer_rooms_without_stapler = []
+    for room in list_of_rooms:
+        if ""printer room"" not in room:
+            continue
+        go_to(room)
+        if not is_in_room(""stapler""):
+            printer_rooms_without_stapler.append(room)
+    go_to(start_loc)
+    if len(printer_rooms_without_stapler) > 0:
+        message = ""The following printer rooms do not have a stapler: ""
+        for room in printer_rooms_without_stapler:
+            message += room + "", ""
+        say(message)
+    else:
+        say(""All printer rooms have a stapler"")
+"
+LunchTime_0,"Go to Jill's office and ask her if she'd like to go for lunch tomorrow. If yes, ask her at what time (offer her some reasonable options). Come back and tell me what she said.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""Jill's office"")
+    response = ask(""Jill"", ""Would you like to go for lunch tomorrow?"", [""Yes"", ""No""])
+    if response == ""Yes"":
+        time = ask(""Jill"", ""At what time?"", [""12:00"", ""12:30"", ""1:00"", ""1:30""])
+        response += "" at "" + time
+    go_to(start_loc)
+    say(""Jill said: "" + response)
+"
+LunchTime_1,"Go to Jill's office and ask her whether she's free to go for lunch tomorrow. If yes, ask her when (give her some reasonable times), and come back and tell me what she said.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""Jill's office"")
+    response = ask(""Jill"", ""Are you free to go for lunch tomorrow?"", [""Yes"", ""No""])
+    if response == ""Yes"":
+        time = ask(""Jill"", ""When would you like to go for lunch?"", [""12:00"", ""12:30"", ""1:00"", ""1:30""])
+        response += "" at "" + time
+    go_to(start_loc)
+    say(""Jill said: "" + response)
+"
+LunchTime_2,"Visit Jill's office and ask her if she would like to go for lunch tomorrow. If yes, ask her when (offer some reasonable lunch time options). Let me know what she said.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""Jill's office"")
+    response = ask(""Jill"", ""Would you like to go for lunch tomorrow?"", [""Yes"", ""No""])
+    if response == ""Yes"":
+        time = ask(""Jill"", ""When would you like to go for lunch?"", [""12:00 PM"", ""1:00 PM"", ""2:00 PM""])
+        response += "" at "" + time
+    go_to(start_loc)
+    say(""Jill said: "" + response)
+"
+LunchTime_3,"Ask Jill in her office whether she will be free to go for lunch tomorrow. If yes, offer her some reasonable time options to choose from, and come back and tell me what she said.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""Jill's office"")
+    response = ask(""Jill"", ""Will you be free to go for lunch tomorrow?"", [""Yes"", ""No""])
+    if response == ""Yes"":
+        lunch_time = ask(""Jill"", ""What time would you prefer?"", [""12:00"", ""12:30"", ""1:00"", ""1:30""])
+        response += "", she prefers "" + lunch_time
+    go_to(start_loc)
+    say(""Jill said: "" + response)
+"
+LunchTime_4,"Ask Jill in her office if she want to go for lunch tomorrow. If yes, give her some reasonable time options and ask her to choose a time. Finally come back and tell me what she said.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""Jill's office"")
+    response = ask(""Jill"", ""Do you want to go for lunch tomorrow?"", [""Yes"", ""No""])
+    if response == ""Yes"":
+        time = ask(""Jill"", ""What time would you prefer?"", [""12:00 PM"", ""1:00 PM"", ""2:00 PM""])
+        response += "", at "" + time
+    go_to(start_loc)
+    say(""Jill said: "" + response)
+"
+WeatherPoll_0,"Go to the main entrance, and wait for someone to show up. Ask them if they feel it is hot out. Repeat this until you have 10 responses, and then come back and tell me what percent of people think it is hot out.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""main entrance"")
+    responses = []
+    while len(responses) < 10:
+        if is_in_room(""person""):
+            response = ask("""", ""Do you feel it is hot out?"", [""Yes"", ""No""])
+            responses.append(response)
+        time.sleep(1)
+    go_to(start_loc)
+    hot_responses = responses.count(""Yes"")
+    percentage = (hot_responses / len(responses)) * 100
+    say(str(percentage) + ""% of people think it is hot out."")
+"
+WeatherPoll_1,"Go to the main entrance. When someone shows up, ask them if they feel that it's hot out. Do this until you collect ten people's responses. Come back and tell me which percent of people think it's hot out.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""main entrance"")
+    responses = []
+    while len(responses) < 10:
+        if is_in_room(""person""):
+            response = ask("""", ""Do you feel that it's hot out?"", [""Yes"", ""No""])
+            responses.append(response)
+        time.sleep(1)
+    hot_responses = responses.count(""Yes"")
+    percentage_hot = (hot_responses / len(responses)) * 100
+    go_to(start_loc)
+    say(str(percentage_hot) + ""% of people think it's hot out"")
+"
+WeatherPoll_2,"Go wait for someone at the main entrance. Ask them if they feel it is hot out, then wait for the next person and ask the same question. Do this until you have ten responses, then come back and report the percentage of people who think it is hot out.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""main entrance"")
+    hot_responses = 0
+    total_responses = 0
+    while total_responses < 10:
+        if is_in_room(""person""):
+            response = ask("""", ""Do you feel it is hot out?"", [""Yes"", ""No""])
+            total_responses += 1
+            if response == ""Yes"":
+                hot_responses += 1
+    go_to(start_loc)
+    percentage_hot = (hot_responses / total_responses) * 100
+    say(str(percentage_hot) + ""% of people think it is hot out"")
+"
+WeatherPoll_3,"Go to the main entrance. If there is no one there, wait for someone. Ask them if they feel it is hot out. Ask 10 people this same question until you have 10 replies. Finally, come back and tell me the percentage of people that think it's hot outside.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""main entrance"")
+    hot_count = 0
+    total_count = 0
+    while total_count < 10:
+        if is_in_room(""person""):
+            response = ask("""", ""Do you think it's hot outside?"", [""Yes"", ""No""])
+            total_count += 1
+            if response == ""Yes"":
+                hot_count += 1
+        time.sleep(1)
+    go_to(start_loc)
+    say(str((hot_count / total_count) * 100) + ""% of people think it's hot outside"")
+"
+WeatherPoll_4,"Go to the main entrance, and if there is no one there, wait for someone to show up. Ask them if they feel it is hot out. Wait for the next person and ask the same question again. Do this 10 times. Come back and report the percentage of people who think it's hot out.
+def task_program():
+    go_to(""main entrance"")
+    hot_count = 0
+    total_count = 0
+    while total_count < 10:
+        if is_in_room(""person""):
+            response = ask("""", ""Do you think it's hot out?"", [""Yes"", ""No""])
+            if response == ""Yes"":
+                hot_count += 1
+            total_count += 1
+        time.sleep(1)
+    go_to(""start_loc"")
+    say(str((hot_count/total_count)*100) + ""% of people think it's hot out."")
+"
+FindBackpack_0,"Check where I left my backpack in all of the conference rooms and bring it back to me.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    for room in list_of_rooms:
+        if ""conference room"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""backpack""):
+            pick(""backpack"")
+            break
+    go_to(start_loc)
+    place(""backpack"")
+"
+FindBackpack_1,"Search all the conference rooms for my backpack and return it to me.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    for room in list_of_rooms:
+        if ""conference room"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""backpack""):
+            pick(""backpack"")
+            break
+    go_to(start_loc)
+    place(""backpack"")
+"
+FindBackpack_2,"Please find my backpack in each conference room and then bring it to me.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    for room in list_of_rooms:
+        if ""conference room"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""backpack""):
+            pick(""backpack"")
+            break
+    go_to(start_loc)
+    place(""backpack"")
+"
+FindBackpack_3,"Go through every conference room and find my backpack, then bring it back to me.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    for room in list_of_rooms:
+        if ""conference room"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""backpack""):
+            pick(""backpack"")
+            break
+    go_to(start_loc)
+    place(""backpack"")
+"
+FindBackpack_4,"Look in all of the conference rooms to search for my backpack and then bring it back to me.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    for room in list_of_rooms:
+        if ""conference room"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""backpack""):
+            pick(""backpack"")
+            break
+    go_to(start_loc)
+    place(""backpack"")
+"
+HalloweenShopping_0,"Go to every office, and if there is anyone there, ask them how many from 0 to 4 of the following treats they'd like: chocolate, caramel, and gummy. Come back and tell me how many of each we need to buy.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    treat_counts = {""chocolate"": 0, ""caramel"": 0, ""gummy"": 0}
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            for treat in treat_counts.keys():
+                response = ask("""", ""How many "" + treat + "" would you like?"", [""0"", ""1"", ""2"", ""3"", ""4""])
+                treat_counts[treat] += int(response)
+    go_to(start_loc)
+    for treat, count in treat_counts.items():
+        say(""We need to buy "" + str(count) + "" "" + treat)
+"
+HalloweenShopping_1,"For each office, check if there is anyone there. If there is, ask the person to choose how many (0-4) of each of the following they'd like: caramel, chocolate, or gummy. Come back and tell me how many of each we need to buy.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    caramel_count = 0
+    chocolate_count = 0
+    gummy_count = 0
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            caramel_count += int(ask("""", ""How many caramels would you like?"", [""0"", ""1"", ""2"", ""3"", ""4""]))
+            chocolate_count += int(ask("""", ""How many chocolates would you like?"", [""0"", ""1"", ""2"", ""3"", ""4""]))
+            gummy_count += int(ask("""", ""How many gummies would you like?"", [""0"", ""1"", ""2"", ""3"", ""4""]))
+    go_to(start_loc)
+    say(""We need to buy "" + str(caramel_count) + "" caramels, "" + str(chocolate_count) + "" chocolates, and "" + str(gummy_count) + "" gummies."")
+"
+HalloweenShopping_2,"Visit every office. If there is a person in the office, ask the person to select 0 to 4 for each of the following categories: gummy, chocolate, or caramel. Return to me and say how many of each we need to buy.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    gummy_count = 0
+    chocolate_count = 0
+    caramel_count = 0
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            gummy_count += int(ask("""", ""How many gummies do you want?"", [""0"", ""1"", ""2"", ""3"", ""4""]))
+            chocolate_count += int(ask("""", ""How many chocolates do you want?"", [""0"", ""1"", ""2"", ""3"", ""4""]))
+            caramel_count += int(ask("""", ""How many caramels do you want?"", [""0"", ""1"", ""2"", ""3"", ""4""]))
+    go_to(start_loc)
+    say(""We need to buy "" + str(gummy_count) + "" gummies, "" + str(chocolate_count) + "" chocolates, and "" + str(caramel_count) + "" caramels."")
+"
+HalloweenShopping_3,"Go to each office. If no person is in the office, skip this office. Otherwise, ask the person in the office to whether they'd like 0,1,2,3, or 4 for each of the following: gummy, caramel, or chocolate. Return to me and say how many of each we need to buy.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    gummy_count = 0
+    caramel_count = 0
+    chocolate_count = 0
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            gummy_count += int(ask("""", ""How many gummies would you like?"", [""0"", ""1"", ""2"", ""3"", ""4""]))
+            caramel_count += int(ask("""", ""How many caramels would you like?"", [""0"", ""1"", ""2"", ""3"", ""4""]))
+            chocolate_count += int(ask("""", ""How many chocolates would you like?"", [""0"", ""1"", ""2"", ""3"", ""4""]))
+    go_to(start_loc)
+    say(""We need to buy "" + str(gummy_count) + "" gummies, "" + str(caramel_count) + "" caramels, and "" + str(chocolate_count) + "" chocolates."")
+"
+HalloweenShopping_4,"Go to every office and skip any office without a person in there. Otherwise, ask the person in the office to decide on how many, from zero to four, of the following they'd like: gummy, caramel, or chocolate. Return to me and say how many of each we need to buy. 
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    gummy_count = 0
+    caramel_count = 0
+    chocolate_count = 0
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            gummy_response = ask("""", ""How many gummies would you like?"", [""0"", ""1"", ""2"", ""3"", ""4""])
+            gummy_count += int(gummy_response)
+            caramel_response = ask("""", ""How many caramels would you like?"", [""0"", ""1"", ""2"", ""3"", ""4""])
+            caramel_count += int(caramel_response)
+            chocolate_response = ask("""", ""How many chocolates would you like?"", [""0"", ""1"", ""2"", ""3"", ""4""])
+            chocolate_count += int(chocolate_response)
+    go_to(start_loc)
+    say(""We need to buy "" + str(gummy_count) + "" gummies, "" + str(caramel_count) + "" caramels, and "" + str(chocolate_count) + "" chocolates."")
+"
+MailDelivery_0,"Pick up a mail bin from the mail room. Go to every office and ask if they have any mail they'd like delivered. If so, ask them to put it in the mail bin. Finally, meet me in the mail room with all the mail. Place the mail bin back and tell me which offices they are from.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""mail room"")
+    pick(""mail bin"")
+    list_of_rooms = get_all_rooms()
+    offices_with_mail = []
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        response = ask("""", ""Do you have any mail you'd like delivered?"", [""Yes"", ""No""])
+        if response == ""Yes"":
+            offices_with_mail.append(room)
+            say(""Please put your mail in the mail bin"")
+    go_to(""mail room"")
+    place(""mail bin"")
+    message = ""The mail is from: ""
+    for office in offices_with_mail:
+        message += office + "", ""
+    say(message)
+    go_to(start_loc)
+"
+MailDelivery_1,"Go to the mail room to pick a mail bin. Ask at every office if they have any mail to deliver. If they reply yes, ask them to put the mail in the bin. Return to the mail room with the mail. Tell me at the mail room which offices these mail are from and put the mail bin back.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""mail room"")
+    pick(""mail bin"")
+    list_of_rooms = get_all_rooms()
+    offices_with_mail = []
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        response = ask("""", ""Do you have any mail to deliver?"", [""Yes"", ""No""])
+        if response == ""Yes"":
+            offices_with_mail.append(room)
+            say(""Please put the mail in the bin"")
+    go_to(""mail room"")
+    place(""mail bin"")
+    message = ""The mail is from: ""
+    for office in offices_with_mail:
+        message += office + "", ""
+    say(message)
+    go_to(start_loc)
+"
+MailDelivery_2,"Grab a mail bin from the mail room. Go to every office, and ask if they have any mail to deliver. Ask them to put all mail in the bin if there is any. Put the mail bin back in the mail room and report which offices the mail is from.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    offices_with_mail = []
+    go_to(""mail room"")
+    pick(""mail bin"")
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        response = ask("""", ""Do you have any mail to deliver?"", [""Yes"", ""No""])
+        if response == ""Yes"":
+            offices_with_mail.append(room)
+            say(""Please put all mail in the bin"")
+    go_to(""mail room"")
+    place(""mail bin"")
+    message = ""The mail is from ""
+    for office in offices_with_mail:
+        message += office + "", ""
+    say(message)
+    go_to(start_loc)
+"
+MailDelivery_3,"Find a mail bin in the mail room and carry it with you. Collect mail from every office by asking if there is any mail they'd like delivered. If yes, ask them to put it in the bin. Return the bin to the mail room and say which offices sent mail.
+def task_program():
+    go_to(""mail room"")
+    pick(""mail bin"")
+    list_of_rooms = get_all_rooms()
+    offices_with_mail = []
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        response = ask("""", ""Do you have any mail to be delivered?"", [""Yes"", ""No""])
+        if response == ""Yes"":
+            offices_with_mail.append(room)
+            ask("""", ""Please put it in the bin"", [""Okay""])
+    go_to(""mail room"")
+    place(""mail bin"")
+    message = ""Offices that sent mail: ""
+    for office in offices_with_mail:
+        message += office + "", ""
+    say(message)
+"
+MailDelivery_4,"Take a mail bin from the mail room. For every office, ask if there is any mail to deliver and if someone says yes, ask them to put all mail in the bin. Finally find me at the mail room. Put the mail bin away, and tell me which offices had mail.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""mail room"")
+    pick(""mail bin"")
+    list_of_rooms = get_all_rooms()
+    offices_with_mail = []
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        response = ask("""", ""Do you have any mail to deliver?"", [""Yes"", ""No""])
+        if response == ""Yes"":
+            offices_with_mail.append(room)
+            ask("""", ""Please put all mail in the bin"", [""Done""])
+    go_to(""mail room"")
+    place(""mail bin"")
+    offices = "", "".join(offices_with_mail)
+    say(offices + "" had mail to deliver"")
+    go_to(start_loc)
+"
+CountSavory_0,"Go to every office, and if there is someone there, ask them whether they'd like a cupcake, ham sandwich, donut, or beef jerky. Come back and tell me how many people chose a savory option.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    savory_count = 0
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            response = ask("""", ""Would you like a cupcake, ham sandwich, donut, or beef jerky?"", [""cupcake"", ""ham sandwich"", ""donut"", ""beef jerky""])
+            if response == ""ham sandwich"" or response == ""beef jerky"":
+                savory_count += 1
+    go_to(start_loc)
+    say(str(savory_count) + "" people chose a savory option"")
+"
+CountSavory_1,"Visit all offices. If anyone is present; ask them to choose from the options of cupcake, ham sandwich, donut, or beef jerky. Let me know how many people selected a savory option when you return.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    savory_count = 0
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            response = ask("""", ""Please choose from the options: cupcake, ham sandwich, donut, or beef jerky"", [""cupcake"", ""ham sandwich"", ""donut"", ""beef jerky""])
+            if response in [""ham sandwich"", ""beef jerky""]:
+                savory_count += 1
+    go_to(start_loc)
+    say(str(savory_count) + "" people selected a savory option"")
+"
+CountSavory_2,"Go through each office; if someone is there, ask about their preference among cupcake, donut, beef jerky, or ham sandwich. Report the number of individuals who opted for a savory item after returning.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    savory_count = 0
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            response = ask("""", ""What is your preference among cupcake, donut, beef jerky, or ham sandwich?"", [""cupcake"", ""donut"", ""beef jerky"", ""ham sandwich""])
+            if response == ""beef jerky"" or response == ""ham sandwich"":
+                savory_count += 1
+    go_to(start_loc)
+    say(str(savory_count) + "" individuals opted for a savory item"")
+"
+CountSavory_3,"Go visit each office. If there is a person in the office, inquire about their liking for cupcake, ham sandwich, beef jerky, or donut. Come back and tell me of the count of people who went for a savory option.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    savory_count = 0
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            response = ask("""", ""Do you prefer a cupcake, ham sandwich, beef jerky, or donut?"", [""cupcake"", ""ham sandwich"", ""beef jerky"", ""donut""])
+            if response in [""ham sandwich"", ""beef jerky""]:
+                savory_count += 1
+    go_to(start_loc)
+    say(str(savory_count) + "" people prefer a savory option"")
+"
+CountSavory_4,"Go to every office, and if there is someone there, ask them whether they'd like a beef jerky, cupcake, ham sandwich, or donut. Come back and tell me how many people preferred a savory option.
+def task_program():
+    start_loc = get_current_location()
+    list_of_rooms = get_all_rooms()
+    savory_count = 0
+    for room in list_of_rooms:
+        if ""office"" not in room:
+            continue
+        go_to(room)
+        if is_in_room(""person""):
+            response = ask("""", ""Would you like a beef jerky, cupcake, ham sandwich, or donut?"", [""beef jerky"", ""cupcake"", ""ham sandwich"", ""donut""])
+            if response == ""beef jerky"" or response == ""ham sandwich"":
+                savory_count += 1
+    go_to(start_loc)
+    say(str(savory_count) + "" people preferred a savory option"")
+"
+SetTemperature_0,"The thermostat is set to 72 degrees. Go to Arjun's office and ask him if he'd like it to be warmer or colder. Come back and tell me what temperature I should set it to.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""Arjun's office"")
+    response = ask(""Arjun"", ""Would you like the temperature to be warmer or colder?"", [""Warmer"", ""Colder""])
+    if response == ""Warmer"":
+        new_temp = ""74 degrees""
+    else:
+        new_temp = ""70 degrees""
+    go_to(start_loc)
+    say(""Set the temperature to "" + new_temp)
+"
+SetTemperature_1,"Ask Arjun in his office if he would like it to be warmer or colder. The thermostat is currently set to 72 degrees. Come back and tell me what temperature I should set the thermostat to based on what Arjun says.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""Arjun's office"")
+    response = ask(""Arjun"", ""Would you like it to be warmer or colder?"", [""Warmer"", ""Colder""])
+    if response == ""Warmer"":
+        new_temp = ""74 degrees""
+    else:
+        new_temp = ""70 degrees""
+    go_to(start_loc)
+    say(""Set the thermostat to "" + new_temp)
+"
+SetTemperature_2,"The thermostat is currently set to 72 degrees. Go ask if Arjun thinks his office should be colder or warmer. Come back and tell me what temperature in degrees I should change the thermostat to.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""Arjun's office"")
+    response = ask(""Arjun"", ""Do you think your office should be colder or warmer?"", [""Colder"", ""Warmer""])
+    if response == ""Colder"":
+        new_temp = ""70""
+    else:
+        new_temp = ""74""
+    go_to(start_loc)
+    say(""Change the thermostat to "" + new_temp + "" degrees"")
+"
+SetTemperature_3,"Go to Arjun's office and ask him if he would like his office to be warmer or colder. The thermostat says the temperature in the office is currently 72 degrees. Come back and tell me what temperature I should reset it to based on Arjun's preferences.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""Arjun's office"")
+    response = ask(""Arjun"", ""Would you like your office to be warmer or colder?"", [""Warmer"", ""Colder""])
+    if response == ""Warmer"":
+        new_temp = ""74 degrees""
+    else:
+        new_temp = ""70 degrees""
+    go_to(start_loc)
+    say(""Please reset the temperature to "" + new_temp)
+"
+SetTemperature_4,"The thermostat is set to 72 degrees. Go to Arjun's office and ask if he would like the temperature to be set to a warmer or colder value. Return and tell me what temperature in degrees I should set the thermostat to.
+def task_program():
+    start_loc = get_current_location()
+    go_to(""Arjun's office"")
+    response = ask(""Arjun"", ""Would you like the temperature to be set to a warmer or colder value?"", [""Warmer"", ""Colder""])
+    if response == ""Warmer"":
+        new_temp = ""75 degrees""
+    else:
+        new_temp = ""70 degrees""
+    go_to(start_loc)
+    say(""Set the thermostat to "" + new_temp)
+"
+GetDrink_0,"Go to the lobby, and ask if the visitor would like a bottle of water, iced tea, or lemonade. Bring what they ask for from the kitchen.
+def task_program():
+    go_to(""lobby"")
+    response = ask(""visitor"", ""Would you like a bottle of water, iced tea, or lemonade?"", [""water"", ""iced tea"", ""lemonade""])
+    go_to(""kitchen"")
+    pick(response)
+    go_to(""lobby"")
+    place(response)
+"
+GetDrink_1,"Ask any visitor in the lobby if they would like a bottle of water, iced tea, or lemonade. Bring what they ask for from the kitchen.
+def task_program():
+    go_to(""lobby"")
+    if is_in_room(""visitor""):
+        response = ask(""visitor"", ""Would you like a bottle of water, iced tea, or lemonade?"", [""water"", ""iced tea"", ""lemonade""])
+        go_to(""kitchen"")
+        pick(response)
+        go_to(""lobby"")
+        place(response)
+"
+GetDrink_2,"Go to the lobby. Ask if the visitor wants: a bottle of water, iced tea, or lemonade. Go to the kitchen and bring the visitor back what they asked for.
+def task_program():
+    go_to(""lobby"")
+    response = ask(""visitor"", ""Would you like a bottle of water, iced tea, or lemonade?"", [""bottle of water"", ""iced tea"", ""lemonade""])
+    go_to(""kitchen"")
+    pick(response)
+    go_to(""lobby"")
+    place(response)
+"
+GetDrink_3,"Go to the lobby and ask any person there if they want iced tea, lemonade or a bottle of water. Bring whatever they asked for back from the kitchen.
+def task_program():
+    go_to(""lobby"")
+    if is_in_room(""person""):
+        response = ask("""", ""Would you like iced tea, lemonade, or a bottle of water?"", [""iced tea"", ""lemonade"", ""bottle of water""])
+        go_to(""kitchen"")
+        pick(response)
+        go_to(""lobby"")
+        place(response)
+"
+GetDrink_4,"Go to the lobby, and ask if the visitor would like a bottle of water, iced tea, or lemonade. If they want a bottle of water, bring it to them from the kitchen. If they want iced tea, bring it to them from the kitchen. If they want lemonade, bring it to them from the kitchen.
+def task_program():
+    go_to(""lobby"")
+    response = ask(""visitor"", ""Would you like a bottle of water, iced tea, or lemonade?"", [""water"", ""iced tea"", ""lemonade""])
+    go_to(""kitchen"")
+    pick(response)
+    go_to(""lobby"")
+    place(response)
+"
+ElevatorTour_0,"Go to the elevator. Wait until someone shows up and ask them if they are here for the tour. If yes, welcome them to the university, tell them to follow you, and take them to the main conference room. If not, wait for the next person. When you get to the conference room, say you have arrived at the conference room and also say enjoy your visit here!
+def task_program():
+    go_to(""elevator"")
+    while True:
+        if is_in_room(""person""):
+            response = ask("""", ""Are you here for the tour?"", [""Yes"", ""No""])
+            if response == ""Yes"":
+                say(""Welcome to the university! Please follow me to the main conference room."")
+                go_to(""main conference room"")
+                say(""We have arrived at the main conference room. Enjoy your visit here!"")
+                break
+        time.sleep(1)
+"
+ElevatorTour_1,"Go to the elevator, and wait until someone shows up. Ask them if they are here for the tour. If yes, welcome them to the university, tell them to follow you, and take them to the main conference room. If not, wait for the next person. When you get to the conference room, say you have arrived at the conference room and wish them an enjoyable visit.
+def task_program():
+    go_to(""elevator"")
+    while True:
+        if is_in_room(""person""):
+            response = ask("""", ""Are you here for the tour?"", [""Yes"", ""No""])
+            if response == ""Yes"":
+                say(""Welcome to the university, please follow me to the main conference room"")
+                go_to(""main conference room"")
+                say(""We have arrived at the main conference room. Enjoy your visit!"")
+                break
+        time.sleep(1)
+"
+ElevatorTour_2,"Go to the elevator and wait for someone to arrive. Inquire if they are here for the tour, and if they say yes, welcome them to the university and tell them to follow you. Then take them to the main conference room. If they say no, wait for someone else. When you get to the conference room, announce your arrival at the conference room and wish them an enjoyable visit.
+def task_program():
+    go_to(""elevator"")
+    while True:
+        if is_in_room(""person""):
+            response = ask("""", ""Are you here for the tour?"", [""Yes"", ""No""])
+            if response == ""Yes"":
+                say(""Welcome to the university! Please follow me."")
+                break
+        time.sleep(1)
+    go_to(""main conference room"")
+    say(""We have arrived at the main conference room. Enjoy your visit!"")
+"
+ElevatorTour_3,"Go to the elevator and wait for a person to show up. When someone shows up, ask them if they are here for the tour, and if they say yes, welcome them to the university and tell them to follow you. Then take them to the main conference room. If they say no, wait for the next person. When you get to the conference room, announce your arrival at the conference room and wish them an enjoyable visit.
+def task_program():
+    go_to(""elevator"")
+    while True:
+        if is_in_room(""person""):
+            response = ask("""", ""Are you here for the tour?"", [""Yes"", ""No""])
+            if response == ""Yes"":
+                say(""Welcome to the university! Please follow me."")
+                break
+        time.sleep(1)
+    go_to(""main conference room"")
+    say(""We have arrived at the main conference room. Enjoy your visit!"")
+"
+ElevatorTour_4,"Go to the elevator, wait until someone arrives, and then ask them if they are here for the tour. If they say yes, welcome them to the university and tell them to follow you, and guide them to the main conference room. If they say no, wait for the next person. When you get to the conference room, announce your arrival at the conference room and wish them an enjoyable visit.
+def task_program():
+    go_to(""elevator"")
+    while True:
+        if is_in_room(""person""):
+            response = ask("""", ""Are you here for the tour?"", [""Yes"", ""No""])
+            if response == ""Yes"":
+                say(""Welcome to the university! Please follow me."")
+                break
+        time.sleep(1)
+    go_to(""main conference room"")
+    say(""We have arrived at the main conference room. Enjoy your visit!"")
+"
+GrilledCheese_1,"Create a list of ingredients needed to make grilled cheese. Visit Zarko's office and inquire which of them he possesses. Return and inform me of the items he does not have.
+def task_program():
+    start_loc = get_current_location()
+    list_of_ingredients = [""bread"", ""cheese"", ""butter"", ""knife""]
+    list_of_ingredients_not_found = []
+    go_to(""Zarko's office"")
+    for ingredient in list_of_ingredients:
+        response = ask(""Zarko"", ""Do you have a "" + ingredient + ""?"", [""Yes"", ""No""])
+        if response == ""No"":
+            list_of_ingredients_not_found.append(ingredient)
+    go_to(start_loc)
+    if len(list_of_ingredients_not_found) > 0:
+        message = """"
+        for ingredient in list_of_ingredients_not_found:
+            message += ingredient + "", ""
+        message += ""are not in Zarko's office""
+    else:
+        message = ""all ingredients are in Zarko's office""
+    say(message)
+
+"

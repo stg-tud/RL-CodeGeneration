@@ -1,0 +1,17 @@
+docs/_site
+docs/.jeckyll-cache
+__pycache__
+*.egg-info
+gpt4/
+data/
+eval/
+train/models/
+outputs/
+wandb/
+visualization/*.csv
+.openai_api_key
+.gemini_api_key
+03_01_gpt_data/
+ru_data/
+unsloth_compiled_cache
+visualization

@@ -1,0 +1,5 @@
+name,error_count
+RobotExecutionError,31
+PythonError,17
+CompletionError,18
+Success,14
