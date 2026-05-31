@@ -201,7 +201,7 @@ class PPOWrapper(PPOTrainer):
                         )
                     score = self.linter_coef * score.to(syncode_score.device) + self.syncode_coef * syncode_score
 
-                    if unit_test is not None:
+                    if unit_tests is not None:
                         kwargs = {
                             "unit_tests": unit_test,
                         }

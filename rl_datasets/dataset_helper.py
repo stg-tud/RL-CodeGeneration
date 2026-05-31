@@ -66,13 +66,15 @@ class BaseDatasetHelper:
             except Exception as e:
                 print(e)
                 raise " Couldn't find the feature language! Exiting"
-
-        self.raw_dataset = self.raw_dataset.shuffle(seed=41, buffer_size=10000)
+        if streaming:
+            self.raw_dataset = self.raw_dataset.shuffle(seed=41, buffer_size=10000)
+        else:
+            self.raw_dataset = self.raw_dataset["train"]
 
         if filter_fn is not None:
             self.raw_dataset = self.raw_dataset.filter(filter_fn)
 
-        if isinstance(self.raw_dataset, (Dataset, DatasetDict)):
+        if isinstance(self.raw_dataset, Dataset):
             # Fallback for non-streaming data
             self.raw_dataset = self.raw_dataset.train_test_split(test_size=0.2)
         else:
