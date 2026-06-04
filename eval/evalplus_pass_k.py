@@ -2,7 +2,7 @@ import json
 import os
 import shutil
 import sys
-
+from pathlib import Path
 from accelerate import Accelerator
 from evalplus.data import get_human_eval_plus, write_jsonl, get_mbpp_plus
 import subprocess
@@ -56,11 +56,12 @@ def get_all_generation(tokenizer, problems):
 def generate_evaluate(tokenizer, save_dir, generation_func):
     acc = Accelerator()
 
-    project_path = project_path = Path(__file__).resolve().parent.parent
+    project_path = str(Path(__file__).resolve().parent.parent) + "/"
     samples_path = project_path + save_dir + "/evalplus_samples.jsonl"
     results_path = project_path + save_dir + "/evalplus_samples_eval_results.json"
     log_path = project_path + save_dir + "/evalplus_run_log.json"
 
+    print("Sample_Path: ", samples_path)
     if acc.is_main_process:
         if not os.path.exists(samples_path):
             problems = get_mbpp_plus()

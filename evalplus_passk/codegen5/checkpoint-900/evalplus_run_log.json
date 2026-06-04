@@ -1,3 +1,0 @@
-"Load from ground-truth from /run/determined/workdir/.cache/evalplus/ee43ecabebf20deef4bb776a405ac5b1.pkl\nReading samples...\nmbpp (base tests)\npass@1:\t
-0.643\nmbpp+ (base + extra tests)\npass@1:\t
-0.534\n"

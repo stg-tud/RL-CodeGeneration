@@ -48,7 +48,7 @@ Create the conda environment:
 
 ```bash
 conda env create -f config/environment.yml
-conda activate ppo_coder
+conda activate code_gen
 ```
 
 If using DeepSpeed, ensure compatibility with your CUDA and PyTorch versions.
