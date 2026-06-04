@@ -1,9 +1,9 @@
 
 # RL-CodeGeneration
 
-Official implementation of the master thesis:
+Official implementation of the paper:
 
-**"Optimizing Code Generation for Autonomous Systems with Reinforcement Learning and Guided Generation"**
+**"Domain-Adaptable Reinforcement Learning for Code Generation with Dense Rewards"**
 
 This repository provides a unified reinforcement learning framework for improving large language models (LLMs) on code generation tasks using:
 
