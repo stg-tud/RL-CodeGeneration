@@ -1,11 +1,14 @@
 import argparse
+import os
 from eval.roboeval import generate_evaluate as roboEval
 from eval.evalplus_pass_k import generate_evaluate as evalplusPassK
 from wrappers.ppo_wrapper import PPOWrapper
 from rl_datasets.dataset_utils import *
 from utils import *
 
-HF_HOME="/pfss/mlde/workspaces/mlde_wsp_PI_Mezini/ea24kuni/models/"
+# Cache location for HuggingFace models/datasets.
+# if set, otherwise fall back to the standard HuggingFace default (~/.cache/huggingface).
+HF_HOME = os.environ.get("HF_HOME", os.path.expanduser("~/.cache/huggingface"))
 
 if __name__ == '__main__':
     os.environ["TRANSFORMERS_CACHE"] = HF_HOME

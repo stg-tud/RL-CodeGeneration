@@ -44,11 +44,16 @@ The design is extensible and allows systematic experimentation with reward funct
 ---
 # Installation
 
-Create the conda environment:
+Create and activate the conda environment:
 
 ```bash
 conda env create -f config/environment.yml
 conda activate code_gen
+```
+Install syncode seperately 
+
+```bash
+pip install --no-dep syncode==0.4.16
 ```
 
 If using DeepSpeed, ensure compatibility with your CUDA and PyTorch versions.

@@ -1,4 +1,3 @@
-from determined.common.check import false
 from transformers import GenerationConfig, LogitsProcessorList, AutoModelForCausalLM, BitsAndBytesConfig, AutoModelForSequenceClassification, StoppingCriteriaList
 from transformers.data.data_collator import DataCollatorWithPadding
 import torch

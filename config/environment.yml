@@ -49,20 +49,28 @@ dependencies:
       - trl==0.24.0
 
       # --- High-Performance Serving & Inference ---
-      - vllm
+      - vllm==0.11.0
       - unsloth==2025.12.10
       - unsloth-zoo==2025.12.8
       - flashinfer-python==0.5.2
-      - xgrammar==0.1.23
+      - xgrammar==0.1.25
       - outlines>=0.2.5
       - llguidance==0.7.30
 
       # --- Constrained Generation & Guided Decoding ---
-      - syncode
+      # NOTE: syncode is REQUIRED (wrappers/syncode_wrapper.py + syncode_coef reward),
+      # but it cannot be listed here: it hard-pins transformers==4.53.2, which conflicts
+      # with the transformers 4.56-4.57 that vllm/unsloth need. Its pin is over-cautious
+      # (verified working against 4.57), so install it AFTER this env is created with:
+      #     pip install --no-deps syncode==0.4.16
+      # --no-deps installs syncode only, without letting its stale transformers pin
+      # downgrade the rest of the stack.
       - evalplus
-      - codebleu
-      - tree-sitter
-      - tree-sitter-python
+      - codebleu==0.7.0
+      - tree-sitter==0.22.3
+      - tree-sitter-python==0.21.0
+      - ruff    
+      - joblib  
 
       # --- Infrastructure Elements ---
       - pandas==2.0.3
