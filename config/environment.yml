@@ -22,7 +22,7 @@ dependencies:
   # Python Package Ecosystem
   - pip:
       # --- Unified Core Targeting ---
-      - transformers>=4.56.1,<=4.57.3
+      - transformers==4.57.3
       - tokenizers==0.22.1
 
       # --- Core Deep Learning Foundations ---
@@ -49,11 +49,11 @@ dependencies:
       - trl==0.24.0
 
       # --- High-Performance Serving & Inference ---
-      - vllm==0.11.0
+      - vllm==0.10.2
       - unsloth==2025.12.10
       - unsloth-zoo==2025.12.8
       - flashinfer-python==0.5.2
-      - xgrammar==0.1.25
+      - xgrammar==0.1.23
       - outlines>=0.2.5
       - llguidance==0.7.30
 
@@ -67,7 +67,7 @@ dependencies:
       # downgrade the rest of the stack.
       - evalplus
       - codebleu==0.7.0
-      - tree-sitter==0.22.3
+      - tree-sitter==0.22.0
       - tree-sitter-python==0.21.0
       - ruff    
       - joblib  

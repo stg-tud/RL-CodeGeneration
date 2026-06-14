@@ -53,7 +53,7 @@ conda activate code_gen
 Install syncode seperately 
 
 ```bash
-pip install --no-dep syncode==0.4.16
+pip install --no-deps syncode==0.4.16
 ```
 
 If using DeepSpeed, ensure compatibility with your CUDA and PyTorch versions.
