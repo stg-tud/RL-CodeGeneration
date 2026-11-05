@@ -177,7 +177,7 @@ Notes on evaluation:
 - **Generation budget:** the number of generated tokens comes from `response_length` in the selected block. The `sft_code_gen_*` blocks use 1024, while the PPO blocks (`ppo`, `ppo_code_gen`) use 256, so their EvalPlus numbers come from different generation budgets. The prompt itself is truncated to 1024 tokens (`MAX_LENGTH` in `eval/evalplus_pass_k.py`).
 - **Generation doesn't stop at the end of the answer.** It always runs to `response_length`, so a larger budget makes evaluation proportionally slower.
 - **Memory:** EvalPlus generates in batches of 16 (in `eval/evalplus_pass_k.py`), which fits a 7B model at a 1024-token budget on one 80 GB GPU. Lower it if you hit out-of-memory errors. This only affects speed and memory, not results.
-- **RoboEval timeout:** each simulated program gets 15 seconds (`rewards/robo_instruct/roboeval/benchmark/simple_tracer.py`). The original 1 second caused correct programs to time out and be counted as `PythonError`.
+- **RoboEval timeout:** each simulated program gets 10 seconds (`rewards/robo_instruct/roboeval/benchmark/simple_tracer.py`). The original 1 second caused correct programs to time out and be counted as `PythonError`.
 
 ---
 

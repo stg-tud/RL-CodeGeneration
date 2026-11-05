@@ -97,7 +97,7 @@ def evaluate_program(taskname, program, tests) -> Union[bool, str]:
         constraint_cb = test["test"]
         should_timeout = test["timeout"]
         try:
-            (trace_elements, status) = run_simulation(taskname, program, num_state, 15)
+            (trace_elements, status) = run_simulation(taskname, program, num_state, 10)
             if not should_timeout and status == "timeout":
                 return False, "PythonError"
             
