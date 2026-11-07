@@ -1,3 +1,4 @@
+import re
 from rewards.robo_instruct.roboeval.misc.utils import read_benchmark, load_module
 from rewards.robo_instruct.roboeval.benchmark.simple_tracer import evaluate_task
 import os
@@ -15,15 +16,8 @@ NUM_COMPLETION = 1
 MAX_LENGTH = 1024
 
 def extract_python_code(text):
-    if "def task_program():" in text:
-        start_idx = text.find("def task_program():")
-        end_idx = text.find("```", start_idx)
-        if end_idx == -1:
-            end_idx = len(text)
-        code = text[start_idx:end_idx]
-    else:
-        code = ""
-    return code
+    match = re.search(r"(def task_program\(\):.*?)(?:```|$)", text, re.DOTALL)
+    return match.group(1) if match else ""
 
 def update_prompt(prompt, tokenizer=None):
     messages = load_module("", "rewards/robo_instruct/roboeval/code_generation/openai_chat_completion_prefix.py").__dict__["messages"]

@@ -12,6 +12,30 @@ from trl import (
 from rl_datasets.dataset_helper import BaseDatasetHelper
 from rewards.ruff_linter_reward import ruff_linter_reward
 
+
+def to_sequence_level(score: torch.Tensor, sequence_length: torch.Tensor) -> torch.Tensor:
+    """
+    Collapses a token-level reward [batch, response_length] to a sequence-level one.
+
+    The reward of each response is moved to its last real token (sequence_length) and is
+    the SUM of the token-level rewards over positions 0..sequence_length; every other
+    position is 0. Positions after sequence_length (padding) are excluded from the sum.
+    With gamma = 1 the total non-KL reward of a response is therefore the same as at token
+    level; only where it is placed differs.
+    """
+    positions = torch.arange(score.size(1), device=score.device)
+    end = sequence_length.to(score.device)
+    live = positions.unsqueeze(0) <= end.unsqueeze(1)
+    total = torch.where(live, score.float(), 0.0).sum(dim=1)
+
+    sequence_score = torch.zeros_like(score)
+    rows = torch.arange(score.size(0), device=score.device)
+    # An empty response has sequence_length == -1; its total is 0 and position 0 is
+    # masked as padding later on.
+    sequence_score[rows, end.clamp(min=0)] = total.to(score.dtype)
+    return sequence_score
+
+
 class PPOWrapper(PPOTrainer):
     def __init__(self, script_args : ScriptArguments, model_args : ModelConfig, ppo_args : PPOConfig, dataset_helper : BaseDatasetHelper,
                  framework_params, reward_functions, cache_dir : str, adapter_path : str = None):
@@ -30,6 +54,7 @@ class PPOWrapper(PPOTrainer):
         self.syncode_coef = framework_params['syncode_coef']
         self.linter_coef = framework_params['linter_coef']
         self.rewards_coefs = framework_params['rewards_coef']
+        self.reward_granularity = framework_params.get('reward_granularity', 'token')
 
         if isinstance(dataset_helper.tokenized_dataset , (Dataset, DatasetDict)):
             processed_dataset_for_model_generation = dataset_helper.preprocess_dataset()
@@ -91,6 +116,7 @@ class PPOWrapper(PPOTrainer):
         pg_clipfrac_stats = torch.zeros(stats_shape, device=device)
         pg_loss_stats = torch.zeros(stats_shape, device=device)
         vf_loss_stats = torch.zeros(stats_shape, device=device)
+        loss_stats = torch.zeros(stats_shape, device=device)
         vf_clipfrac_stats = torch.zeros(stats_shape, device=device)
         entropy_stats = torch.zeros(stats_shape, device=device)
         ratio_stats = torch.zeros(stats_shape, device=device)
@@ -195,11 +221,17 @@ class PPOWrapper(PPOTrainer):
                     )
                     value = full_value[:, context_length - 1 : -1].squeeze(-1)
 
-                    score, _ = self.linter_function(
+                    lint_score, _ = self.linter_function(
                             postprocessed_response,
                             processing_class
                         )
-                    score = self.linter_coef * score.to(syncode_score.device) + self.syncode_coef * syncode_score
+                    lint_score = lint_score.to(syncode_score.device)
+                    # The task rewards evaluate only the tokens with a positive value in
+                    # mask_score. Lint is left out of it on purpose: a line with a lint
+                    # violation is still part of the program and has to reach the unit
+                    # tests / simulator. Lint only affects the reward (score).
+                    mask_score = self.linter_coef * torch.ones_like(lint_score) + self.syncode_coef * syncode_score
+                    score = self.linter_coef * lint_score + self.syncode_coef * syncode_score
 
                     if unit_tests is not None:
                         kwargs = {
@@ -211,9 +243,13 @@ class PPOWrapper(PPOTrainer):
                     if self.use_extra_rewards:
                         rewards = torch.zeros_like(score, dtype=torch.bfloat16).to(postprocessed_response.device)
                         for reward_function, reward_coef in zip(self.reward_functions, self.rewards_coefs):
-                            rewards += reward_coef * reward_function(postprocessed_response, processing_class, score, label, **kwargs)
+                            rewards += reward_coef * reward_function(postprocessed_response, processing_class, mask_score, label, **kwargs)
 
                         score = rewards.to(score.device) + score
+
+                    if self.reward_granularity == "sequence":
+                        # The KL penalty is added per token later and is not affected.
+                        score = to_sequence_level(score, sequence_length)
 
                     responses.append(response)
                     postprocessed_responses.append(postprocessed_response)
@@ -344,6 +380,7 @@ class PPOWrapper(PPOTrainer):
                                 )
                                 pg_loss_stats[ppo_epoch_idx, minibatch_idx, gradient_accumulation_idx] = pg_loss
                                 vf_loss_stats[ppo_epoch_idx, minibatch_idx, gradient_accumulation_idx] = vf_loss
+                                loss_stats[ppo_epoch_idx, minibatch_idx, gradient_accumulation_idx] = loss
                                 vf_clipfrac_stats[ppo_epoch_idx, minibatch_idx, gradient_accumulation_idx] = (
                                     vf_clipfrac
                                 )
@@ -383,6 +420,8 @@ class PPOWrapper(PPOTrainer):
                 metrics["policy/clipfrac_avg"] = self.accelerator.gather_for_metrics(pg_clipfrac_stats).mean().item()
                 metrics["loss/policy_avg"] = self.accelerator.gather_for_metrics(pg_loss_stats).mean().item()
                 metrics["loss/value_avg"] = self.accelerator.gather_for_metrics(vf_loss_stats).mean().item()
+                # The loss that is backpropagated: policy loss + vf_coef * value loss.
+                metrics["loss/total_avg"] = self.accelerator.gather_for_metrics(loss_stats).mean().item()
                 metrics["val/clipfrac_avg"] = self.accelerator.gather_for_metrics(vf_clipfrac_stats).mean().item()
                 metrics["policy/entropy_avg"] = self.accelerator.gather_for_metrics(entropy_stats).mean().item()
                 metrics["val/ratio"] = self.accelerator.gather_for_metrics(ratio_stats).mean().item()
@@ -390,6 +429,7 @@ class PPOWrapper(PPOTrainer):
                 metrics["val/num_eos_tokens"] = (responses == processing_class.eos_token_id).sum().item()
                 metrics["lr"] = self.lr_scheduler.get_last_lr()[0]
                 metrics["episode"] = self.state.episode
+                metrics["config/sequence_level_reward"] = float(self.reward_granularity == "sequence")
                 self.state.epoch = self.state.episode / self.train_dataset_len  # used by self.log
                 self.state.global_step += 1
                 self.log(metrics)
@@ -507,7 +547,11 @@ class PPOWrapper(PPOTrainer):
                             processing_class
                         )
 
-                    scores = self.linter_coef * scores.to(postprocessed_response.device) + self.syncode_coef * syncode_scores.to(postprocessed_response.device)
+                    scores = scores.to(postprocessed_response.device)
+                    syncode_scores = syncode_scores.to(postprocessed_response.device)
+                    # Code selection for the task rewards, without lint (see train()).
+                    mask_scores = self.linter_coef * torch.ones_like(scores) + self.syncode_coef * syncode_scores
+                    scores = self.linter_coef * scores + self.syncode_coef * syncode_scores
 
                     table["scores"].extend(self.accelerator.gather_for_metrics(scores).float().cpu().numpy())
 
@@ -523,7 +567,7 @@ class PPOWrapper(PPOTrainer):
                     if self.use_extra_rewards:
                         rewards = torch.zeros_like(scores, dtype=torch.bfloat16).to(postprocessed_response.device)
                         for reward_function, reward_coef in zip(self.reward_functions, self.rewards_coefs):
-                            r = reward_coef * reward_function(postprocessed_response, processing_class, scores, labels, **kwargs)
+                            r = reward_coef * reward_function(postprocessed_response, processing_class, mask_scores, labels, **kwargs)
                             seprate_rewards.append(r)
                             rewards += r
 
@@ -537,7 +581,7 @@ class PPOWrapper(PPOTrainer):
                         end_score = rewards.to(postprocessed_response.device) + scores
                         table["end_score"].extend(self.accelerator.gather_for_metrics(end_score).float().cpu().numpy())
 
-                    attention_mask = end_score > 0.0
+                    attention_mask = mask_scores > 0.0
                     attention_mask = attention_mask.to(postprocessed_response.device)
                     selected_output = torch.masked_fill(postprocessed_response, ~attention_mask,
                                                       processing_class.pad_token_id)
@@ -569,13 +613,17 @@ class PPOWrapper(PPOTrainer):
     def generate_eval(self, prompts, batch_size, max_length):
         args = self.args
         processing_class = self.processing_class
+        # Greedy decoding for evaluation (deterministic: always picks the most likely token).
         generation_config = GenerationConfig(
             max_new_tokens=self.args.response_length,
-            temperature=1e-3,
-            top_k=0.0,
-            top_p=1.0,
-            do_sample=True
+            do_sample=False
         )
+        # Decoder-only models continue from the last position, so prompts must be padded on the
+        # LEFT. With right padding the model generates after hundreds of [PAD]s and often drops
+        # the ```python fence, which makes extract_python_code return "" and the sample fail.
+        # The tokenizer is left-padding already (see BaseDatasetHelper); fail loudly if not.
+        if processing_class.padding_side != "left":
+            raise ValueError(f"Prompts must be left-padded, tokenizer has padding_side='{processing_class.padding_side}'")
         queries = processing_class(prompts, padding="max_length", truncation=True, return_tensors="pt", max_length=max_length)["input_ids"].to(self.accelerator.device)
         decoded_responses = []
         table = defaultdict(list)
@@ -704,7 +752,8 @@ class PPOWrapper(PPOTrainer):
                         print(
                             "--------------------------------------------------------------------------------------------------------------------------")
                         rewards, violations = self.linter_function([postprocessed_response[idx]], processing_class)
-                        rewards = rewards.to(syncode_scores.device) + syncode_scores[idx]
+                        # Code selection without lint (see train()).
+                        rewards = torch.ones_like(rewards).to(syncode_scores.device) + syncode_scores[idx]
 
                         attention_mask = rewards > 0.0
                         attention_mask = attention_mask.to(postprocessed_response.device)

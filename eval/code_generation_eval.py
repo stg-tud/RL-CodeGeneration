@@ -1,4 +1,5 @@
 
+import re
 import os
 
 import numpy as np
@@ -16,19 +17,8 @@ os.environ["TOKENIZERS_PARALLELISM"] = "true"
 MAX_LENGTH = 1024
 
 def extract_python_code(text):
-    if "```python" in text:
-        start_idx = text.find("```python")
-        if start_idx != -1:
-            start_idx = start_idx + len("```python")
-        else:
-            start_idx = 0
-        end_idx = text.find("```", start_idx)
-        if end_idx == -1:
-            end_idx = len(text)
-        code = text[start_idx:end_idx]
-    else:
-        code = ""
-    return code
+    match = re.search(r"```[^\n]*\n(.*?)```", text, re.DOTALL)
+    return match.group(1) if match else ""
 
 def update_prompt(prompt, tokenizer=None):
     messages = [

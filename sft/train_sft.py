@@ -35,9 +35,8 @@ def parse_sft_hyperparams(path: str, variant: str = None):
     model_args = ModelConfig(**params["ModelConfig"])
 
     # Optional extra path segment (e.g. "1.5b"/"7b") so checkpoints for different model
-    # sizes of the same domain/dataset don't collide - see CLAUDE.md's "Supervised
-    # fine-tuning" section on evaluate_passk's save_dir not including a model-name
-    # segment. Absent for the default recipe to keep its already-completed run's layout unchanged.
+    # sizes of the same domain/dataset don't collide (evaluate_passk's save_dir has no
+    # model-name segment). Absent for the default recipe to keep its existing layout unchanged.
     checkpoint_subdir = params.get("checkpoint_subdir")
     output_dir_parts = ["savings", model_args.model_name_or_path, script_args.dataset_name, "sft"]
     logging_dir_parts = ["savings", "logs", model_args.model_name_or_path, script_args.dataset_name, "sft"]

@@ -228,7 +228,8 @@
       ],
       "syncode_coef": 0.1,
       "linter_coef": 0.1,
-      "rewards_coef": [0.8]
+      "rewards_coef": [0.8],
+      "reward_granularity": "token"
     },
     "code_gen": {
       "use_extra_rewards": true,
@@ -238,7 +239,8 @@
       ],
       "syncode_coef": 0.1,
       "linter_coef": 0.1,
-      "rewards_coef": [0.1, 0.7]
+      "rewards_coef": [0.1, 0.7],
+      "reward_granularity": "token"
     }
   }
 

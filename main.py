@@ -26,9 +26,12 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     training_args, model_args, script_args, framework_params, reward_functions = parse_json_file(params=args.param, framework_params=args.framework_params)
+    # Eval results of the sequence-level run get their own directory so they don't
+    # overwrite the token-level results of a checkpoint with the same name.
+    granularity_dir = "sequence_level/" if framework_params["reward_granularity"] == "sequence" else ""
 
     if not args.checkpoint is None:
-        adapter_path = "savings/" + model_args.model_name_or_path + "/" + script_args.dataset_name + "/" + args.checkpoint + "/policy"
+        adapter_path = os.path.join(training_args.output_dir, args.checkpoint, "policy")
     else:
         adapter_path = None
 
@@ -53,7 +56,7 @@ if __name__ == '__main__':
                                 framework_params=framework_params, reward_functions=reward_functions, cache_dir=HF_HOME, adapter_path=adapter_path)
 
         if adapter_path is not None:
-            save_dir = "roboeval/" + model_args.model_name_or_path + "/" + args.checkpoint
+            save_dir = "roboeval/" + model_args.model_name_or_path + "/" + granularity_dir + args.checkpoint
         else:
             save_dir = "roboeval/" + model_args.model_name_or_path + "/original"
 
@@ -68,7 +71,7 @@ if __name__ == '__main__':
                                  framework_params=framework_params, reward_functions=reward_functions,
                                  cache_dir=HF_HOME, adapter_path=adapter_path)
         if adapter_path is not None:
-            save_dir = "evalplus_passk/" + args.checkpoint
+            save_dir = "evalplus_passk/" + granularity_dir + args.checkpoint
         else:
             save_dir = "evalplus_passk/original/"
         evalplusPassK(ppo_wrapper.processing_class, save_dir, ppo_wrapper.generate_eval)

@@ -1,7 +1,10 @@
 import subprocess
 import os
+import sys
+import shutil
 import tempfile
 import json
+import re
 from collections import defaultdict
 from typing import List, Dict, Any, Tuple
 from transformers import PreTrainedTokenizerBase
@@ -23,6 +26,39 @@ RUFF_RULE_CATEGORIES = {
     "S": "safety",         # flake8-bandit (direct security checks)
     "B30": "safety",       # Bugbear B30x rules (e.g., insecure pickle usage)
 }
+
+# Ruff discovers configuration relative to the checked file. The code is written to a
+# temporary file outside the project, so the config has to be passed explicitly.
+RUFF_CONFIG_PATH = os.environ.get(
+    "RUFF_CONFIG_PATH",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "pyproject.toml"),
+)
+
+if not os.path.isfile(RUFF_CONFIG_PATH):
+    raise FileNotFoundError(f"Ruff configuration not found: {RUFF_CONFIG_PATH}")
+
+
+def _resolve_ruff_command() -> List[str]:
+    """Locates the ruff executable (PATH, then the active interpreter's bin dir)."""
+    ruff_path = shutil.which("ruff")
+    if ruff_path is None:
+        candidate = os.path.join(os.path.dirname(sys.executable), "ruff")
+        if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
+            ruff_path = candidate
+    if ruff_path is not None:
+        return [ruff_path]
+    try:
+        subprocess.run([sys.executable, "-m", "ruff", "--version"], capture_output=True, check=True)
+        return [sys.executable, "-m", "ruff"]
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        raise RuntimeError(
+            "Ruff is not installed. Install it (e.g. `pip install ruff==0.12.2`) "
+            "or add it to PATH."
+        )
+
+
+RUFF_COMMAND = _resolve_ruff_command()
+
 
 def get_ruff_category(rule_code: str) -> str:
     """Categorizes a Ruff rule code based on the predefined mapping."""
@@ -58,7 +94,13 @@ def run_single_ruff_check_and_categorize(code_string: str) -> List[Dict[str, Any
     try:
         # Run Ruff with all relevant rules enabled (as per pyproject.toml)
         # Use --output-format json for easy parsing
-        command = ["ruff", "check", "--output-format", "json", temp_file_path]
+        command = RUFF_COMMAND + [
+            "check",
+            "--config", RUFF_CONFIG_PATH,
+            "--no-cache",
+            "--output-format", "json",
+            temp_file_path,
+        ]
         #print(f"  Command: {' '.join(command)}")
 
         result = subprocess.run(
@@ -70,6 +112,14 @@ def run_single_ruff_check_and_categorize(code_string: str) -> List[Dict[str, Any
 
         ruff_raw_output = result.stdout
         ruff_errors_stderr = result.stderr
+
+        # Exit code 0: no violations, 1: violations found, 2: ruff itself failed
+        # (e.g. invalid configuration). Treating 2 as "no violations" would hand out
+        # full reward, so fail loudly instead.
+        if result.returncode not in (0, 1):
+            raise RuntimeError(
+                f"Ruff failed with exit code {result.returncode}:\n{ruff_errors_stderr}"
+            )
 
         if ruff_errors_stderr:
             print(f"  Ruff Check (stderr):\n{ruff_errors_stderr}")
@@ -115,15 +165,6 @@ def run_single_ruff_check_and_categorize(code_string: str) -> List[Dict[str, Any
 
         #print(f"Ruff detected a total of {len(violations)} issues.")
 
-    except FileNotFoundError:
-        print("Error: Ruff command not found. Make sure Ruff is installed and in your PATH.")
-        categorized_issues.append({
-            "category": "others",
-            "code": "RUFF_NOT_FOUND",
-            "message": "Ruff command not found.",
-            "start_location": {"row": 0, "column": 0},
-            "end_location": {"row": 0, "column": 0}
-        })
     finally:
         if os.path.exists(temp_file_path):
             os.remove(temp_file_path)
@@ -172,22 +213,66 @@ def get_rewards(violations, row_change_tokens, ref_tensor):
 
     return rewards
 
+# Same fence pattern as extract_python_code in eval/evalplus_pass_k.py.
+CODE_BLOCK_PATTERN = re.compile(r"```[^\n]*\n(.*?)```", re.DOTALL)
+
+# Reward for tokens outside the fenced code block (fences, explanations). Kept positive:
+# the extra rewards select tokens with score > 0 and then look for the fences again,
+# so a non-positive value here would drop the fences from that selection.
+OUTSIDE_CODE_REWARD = 1.0
+
+
+def extract_code_block(text: str) -> Tuple[str, int, int]:
+    """
+    Returns (code, first_line, num_lines) of the first fenced code block, where
+    first_line is the 0-based line of the response on which the code starts.
+    Without a fenced block the whole response is treated as code.
+    """
+    match = CODE_BLOCK_PATTERN.search(text)
+    if match is None:
+        return text, 0, text.count("\n") + 1
+    code = match.group(1)
+    first_line = text[:match.start(1)].count("\n")
+    num_lines = code.count("\n") + (0 if code.endswith("\n") else 1)
+    return code, first_line, num_lines
+
+
+def shift_violation_rows(violations: List[Dict[str, Any]], offset: int) -> None:
+    """Moves violation rows from code-block coordinates to response coordinates."""
+    if offset == 0:
+        return
+    for violation in violations:
+        for key in ("start_location", "end_location"):
+            location = violation.get(key)
+            if isinstance(location, dict) and isinstance(location.get("row"), int):
+                location["row"] += offset
+
+
 def ruff_linter_reward(postprocessed_responses, processing_class: PreTrainedTokenizerBase):
     violationss = []
     rewardss = []
 
     for postprocessed_response in postprocessed_responses:
-        code_string = processing_class.decode(postprocessed_response, skip_special_tokens=True)
+        response_text = processing_class.decode(postprocessed_response, skip_special_tokens=True)
+        code_string, first_line, num_lines = extract_code_block(response_text)
 
         violations = run_single_ruff_check_and_categorize(code_string)
+        shift_violation_rows(violations, first_line)
+
         row_change_tokens = find_row_change_token(postprocessed_response, processing_class)
         rewards = get_rewards(violations, row_change_tokens, postprocessed_response)
 
-        attention_mask = rewards == 0.0
-        rewards = torch.where(attention_mask, 1.0, rewards)
+        # Token span of the code block: from the start of its first line up to the
+        # start of the line after its last line.
+        code_mask = torch.zeros_like(rewards, dtype=torch.bool)
+        if first_line < len(row_change_tokens):
+            start_token_idx = row_change_tokens[first_line]
+            end_line = first_line + num_lines
+            end_token_idx = row_change_tokens[end_line] if end_line < len(row_change_tokens) else len(rewards)
+            code_mask[start_token_idx:end_token_idx] = True
 
-        attention_mask = rewards < 0.0
-        rewards = torch.where(attention_mask, -1.0, rewards)
+        rewards = torch.where(rewards < 0.0, -1.0, 1.0)
+        rewards = torch.where(code_mask, rewards, OUTSIDE_CODE_REWARD)
 
         rewardss.append(rewards)
         violationss.append(violations)

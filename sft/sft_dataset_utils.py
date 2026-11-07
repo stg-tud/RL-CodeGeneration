@@ -17,9 +17,7 @@ def get_robo_instruct_sft_dataset(model_or_tokenizer_name: str, cache_dir: str, 
     uses 2 few-shot examples at indices [0,3,4,7,8] and a 1024 max_length, vs this
     function's 1 example / indices [0,1,2] / 512 max_length inherited from
     robo_instruct_tokenization_function). That train/eval prompt mismatch is pre-existing
-    in the framework and affects PPO too - see CLAUDE.md's "Supervised fine-tuning"
-    section for the full writeup and why this wasn't "fixed" here without a decision on
-    the apples-to-apples-with-PPO tradeoff it implies.
+    in the framework and affects PPO too, so it is kept here to stay comparable with PPO.
     """
     raw_dataset = load_dataset("zichao22/robo-instruct", cache_dir=cache_dir)["train"]
     split = raw_dataset.train_test_split(test_size=0.2, seed=seed)

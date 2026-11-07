@@ -94,6 +94,11 @@ class BaseDatasetHelper:
         self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name, cache_dir=cache_dir)
         self.tokenize_targets = tokenize_targets
         self.tokenizer.add_special_tokens({"pad_token": "[PAD]"})
+        # Prompts are always left-padded: generation continues from the last position, so
+        # with right padding the model would generate after a block of [PAD] tokens.
+        # Responses are appended after the prompt and padded on the right (after EOS),
+        # which the reward and PPO code rely on (sequence_length, truncate_response).
+        self.tokenizer.padding_side = "left"
         if self.tokenizer.chat_template is None:
             self.tokenizer.chat_template = SIMPLE_CHAT_TEMPLATE
 
